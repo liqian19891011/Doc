@@ -5,7 +5,7 @@ description: ""
 category: "4. Deep in RESTier"
 ---
 
-<img src="../images/04-01-01-RESTier Structure.png" align="center"  />
+![]({{site.baseurl}}/images/04-01-01-RESTier Structure.png)
 
 Restier provides a connection between various data sources and existing clients. The framework contains 4 components: Core, Module, Provider and Publisher:
 * The core component provides functionalities for building up domain specific metadata, and logic for data CRUD processing flow. It also includes some extensible interfaces which allows pluggable modules.
