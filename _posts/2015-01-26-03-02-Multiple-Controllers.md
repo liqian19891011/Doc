@@ -15,7 +15,7 @@ Here we assume that you are familiar with the basic implementation of RESTier; i
 
 Below is the _default_ controller:
 
-```csharp
+{% highlight csharp %}
     public class NorthwindController :ODataDomainController<NorthwindDomain>
     {
         private NorthwindContext DbContext
@@ -26,11 +26,11 @@ Below is the _default_ controller:
             }
         }
     }
-```
+{% endhighlight %}
 
 Below is a _specific_ controller for the entity set *Regions*. This is exactly the same with as it would be using just [Web API OData](http://www.asp.net/web-api/overview/odata-support-in-aspnet-web-api/odata-v4/create-an-odata-v4-endpoint) _except_ we've added the `NorthwindContext` to the beginning: `private readonly NorthwindContext _context = new NorthwindContext();`.
 
-```csharp
+{% highlight csharp %}
     public class RegionsController : ODataController
     {
         private readonly NorthwindContext _context = new NorthwindContext();
@@ -48,6 +48,6 @@ Below is a _specific_ controller for the entity set *Regions*. This is exactly t
             return result ;
         }
     }
-```
+{% endhighlight %}
 
 Entity sets with no controllers specified will be routed to the corresponding method on the `NorthwindController`. For entity sets with controllers specified, however, the more specific controller will override the default behaviors. In this example, the `Get` and `Get(int key)` calls for the **Regions** entity are intercepted by the `RegionsController`. 

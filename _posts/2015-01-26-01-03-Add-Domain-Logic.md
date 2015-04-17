@@ -13,7 +13,7 @@ RESTier is currently a preview release, so there remain features that are not ye
 ### Attribute Routing
 Attribute Routing allows [an entity's property to be accessed directly via a unique URL](http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/part2-url-conventions/odata-v4.0-errata02-os-part2-url-conventions-complete.html#_Toc406398085), so that the value can be directly retrieved or updated. While Attribute Routing isn't yet supported by RESTier, you can fall back to Web API OData in order to add this functionality. To do so, add the code below to `NorthwindController.cs`. 
 
-```csharp
+{% highlight csharp %}
 using Microsoft.Restier.WebApi;
 using RESTierDemo.Models;
 using System.Data.Entity.Infrastructure;
@@ -60,20 +60,20 @@ public IHttpActionResult UpdateProductUnitPrice(int key, [FromBody]decimal price
     }
     return Ok(price);
 }
-```
+{% endhighlight %}
 
 **Enable Entity Counts**
 
 Entity counts are not currently supported by the `ODataDomainController`, but you can easily implement them yourself. The example below asynchronously queries the database for the count.
 
-```csharp
+{% highlight csharp %}
 // Attribute routing to enable $count
 [ODataRoute("Products/$count")]
 public async Task<IHttpActionResult> GetProductsCount()
 {
     return Ok(await DbContext.Products.CountAsync());
 }
-```
+{% endhighlight %}
 
 ## Enable Rich Domain Logic
 
@@ -82,7 +82,7 @@ One important feature for RESTier is that it can easily enable rich domain logic
 ### Imperative Views
 Imperative Views allow custom views to be accessed which are not supported directly by existing entities. They may, for example, join multiple entities together, or provide a particular filter of a particular entity. With the convention-based module, you define these using `protected` properties that return `IQueryable<T>`. For the current iteration, `T` must be an existing entity type. Imperative views are also currently read-only. For example, by adding the code below to `NorthwindDomain.cs`, you can easily add an entity set named `CurrentOrders` in both the metadata and entity set containers.
 
-```csharp
+{% highlight csharp %}
 using System.Linq;
 using Microsoft.Restier.Conventions;
 using Microsoft.Restier.Core;
@@ -103,20 +103,20 @@ public class NorthwindDomain : DbDomain<NorthwindContext>
 	}
 	// Other code
 }
-```
+{% endhighlight %}
 
 After adding the `[EnableConventions]` attribute and the code for the `CurrentOrders` imperative view, you will notice that `http://localhost:<ISS Express port>/api/Northwind/$metadata` now contains:
 
-```xml
+{% highlight xml %}
 <EntityContainer>
 ......
 	<EntitySet Name="CurrentOrders" EntityType="Microsoft.Data.Domain.Samples.Northwind.Models.Order" />
 </EntityContainer>
-```
+{% endhighlight %}
 
 Further, you can now query `CurrentOrders` via `http://localhost:31181/api/Northwind/CurrentOrders` and get:
 
-```json
+{% highlight json %}
 {
     "@odata.context": "http://localhost:31181/api/Northwind/$metadata#CurrentOrders",
     "value": [
@@ -136,36 +136,36 @@ Further, you can now query `CurrentOrders` via `http://localhost:31181/api/North
         ...
     ]
 }
-```
+{% endhighlight %}
 
 ### Entity Set Filters
 Entity Set Filters allow existing entity sets to be pre-filtered so only a subset of entities are returned by default. With the convention-based module, Entity Set Filters are specified by creating an `OnFilterEntitySet` method which accepts an `IQueryable<T>` argument and returns an `IQueryable<T>`, where `T` is the type of an entity in the entity set. By adding the code below to `NorthwindDomain.cs`, all queries to `Customers` will only return customers from France.
 
-```csharp
+{% highlight csharp %}
 private IQueryable<Customer> OnFilterCustomers(IQueryable<Customer> customers)
 {
     return customers.Where(c => c.Country == "France");
 }
-```
+{% endhighlight %}
 
 _**Enabling Filtered Entity Counts**_
 
 Because Entity Counts are not handled internally, the aforementioned `Count` method will not be passed through any filters you create. To correct this, you must modify your `Count` method to explicitly call the filter method. For example:
 
-```csharp
+{% highlight csharp %}
 // Attribute routing to enable $count
 [ODataRoute("Customers/$count")]
 public async Task<IHttpActionResult> GetCustomersCount()
 {
     return Ok(await OnFilterCustomers(DbContext.Customers).CountAsync());
 }
-```
+{% endhighlight %}
 
 ### Submit Logic
 Using the same conventions, RESTier can provide custom business logic when entities are submitted. You can do this to all entity set with all operations (`Updated`, `Inserted`, `Deleted`; `Updating`, `Inserting`, `Deleting`) as long as you follow the naming convention `On[Operation][EntitySet]`. For example, by adding the code below to `NorthwindDomain.cs`, you can define what is to be done when updating a `Product`: 
 
 
-```csharp
+{% highlight csharp %}
 private void OnUpdatingProducts(Product product)
 {
     // Logic when updating a product
@@ -175,12 +175,12 @@ private void OnInsertedProducts(Product product)
 {
     // Logic after create a new product
 }
-```
+{% endhighlight %}
 
 ### Role-based Security
 By default, RESTier provides full read and write access to all entity sets. For many scenarios this won't be desirable. To address this, RESTier also allows role-based security. When you enable role-based security, the entire domain is locked down, and you need to grant _explicit permissions_ to provide access. For each grant, you must specify a permission; you can see what those are from the `DomainPermissionType` enumeration. You can optionally specify what securable and role (an arbitrary name) the permission applies to. By adding the code below to `NorthiwindDomain.cs`, you can grant several different permissions to different entity sets. This is just an example; there are quite a few possible compositions for permissions. We will have more detailed documentation for this later, but in the meanwhile you can first try them by yourself.
 
-```csharp
+{% highlight csharp %}
 using System.Linq;
 using Microsoft.Restier.Conventions;
 using Microsoft.Restier.Core;
@@ -200,7 +200,7 @@ public class NorthwindDomain : DbDomain<NorthwindContext>
 {
    // code 
 }
-```
+{% endhighlight %}
 
 By adding the security convention above, the security roles are as follows: 
 
