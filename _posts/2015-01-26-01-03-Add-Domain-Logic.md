@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "1.3 Add Rich Domain Logic to an OData serivce using RESTier"
+title: "1.3 Add Domain Logic to an OData service"
 description: ""
 category: "1. Getting Started"
 ---
